@@ -79,12 +79,6 @@ import glob
 # In[ ]:
 
 
-# Define constant(s) for this file
-process_trump_called = False
-
-# In[ ]:
-
-
 # Define constants in "constant.py"
 # x:y = tiers:(axis should be divisible by)
 t_div = {1: 1, 2: 1, 3: 2, 4: 2, 5: 4, 6: 4}
@@ -212,8 +206,7 @@ through Unidecode. For other data, you can modify _characters. See TRAINING_DATA
 '''
 
 # For english
-en_symbols = PAD + EOS + 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!\'(),-.:;? '  # <-For deployment(Because korean ALL_SYMBOLS follow this convention)
-
+en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE  # <-For deployment(Because korean ALL_SYMBOLS follow this convention)
 symbols = ALL_SYMBOLS  # for korean
 
 """
@@ -1155,16 +1148,8 @@ def process_blizzard(text: str):
 
 
 def process_trump(text: str):
-    # Globalize constant(s) for this file
-    global process_trump_called
     text = text.replace('@ ', '').replace('# ', '').replace('| ', '') + EOS
-
-    # Debugging statement to ensure '_symbol_to_id' has been converted to English characters
-    if not process_trump_called:
-        print(_symbol_to_id)
-
     seq = [_symbol_to_id[c] for c in text]
-    process_trump_called = True
     return np.array(seq, dtype=np.int32)
 
 
