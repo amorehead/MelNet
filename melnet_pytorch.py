@@ -408,9 +408,9 @@ english_dictionary = {
 
 # Define constants from "__init__.py"
 # Mappings from symbol to numeric ID and vice versa (Korean characters disabled in 'main()'):
-_symbol_to_id = {s: i for i, s in enumerate(symbols)}  # 80개
-_id_to_symbol = {i: s for i, s in enumerate(symbols)}
-isEn = False
+_symbol_to_id = {s: i for i, s in enumerate(en_symbols)}  # 80개
+_id_to_symbol = {i: s for i, s in enumerate(en_symbols)}
+isEn = True
 
 # Regular expression matching text enclosed in curly braces:
 _curly_re = re.compile(r'(.*?)\{(.+?)\}(.*)')
@@ -791,9 +791,15 @@ def convert_to_en_symbols():
     '''Converts built-in korean symbols to english, to be used for english training
     
 '''
-    global _symbol_to_id, _id_to_symbol, isEn, en_symbols
+    global _symbol_to_id, _id_to_symbol, isEn, en_symbols, PAD, EOS, PUNC, SPACE, NUMBERS, SYMBOLS
     if not isEn:
         print(" [!] Converting to english mode")
+    PAD = '_'
+    EOS = '~'
+    PUNC = '!$%&*\'(),-.:;?`'
+    SPACE = ' '
+    NUMBERS = '0123456789'
+    SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE
     _symbol_to_id = {s: i for i, s in enumerate(en_symbols)}
     _id_to_symbol = {i: s for i, s in enumerate(en_symbols)}
