@@ -6,11 +6,12 @@
 
 # import importlib
 # if importlib.util.find_spec('jamo') is None:
-#     get_ipython().system('pip install jamo')
+#   !pip install jamo
 # if importlib.util.find_spec('audiosegment') is None:
-#     get_ipython().system('pip install audiosegment')
+#   !pip install audiosegment
 # if importlib.util.find_spec('unidecode') is None:
-#     get_ipython().system('pip install unidecode')
+#   !pip install unidecode
+
 
 # In[ ]:
 
@@ -95,7 +96,7 @@ f_div = {1: 1, 2: 1, 3: 2, 4: 2, 5: 4, 6: 4, 7: 8}
 # Define constants in "utils.py"
 PAD = '_'
 EOS = '~'
-PUNC = '!\'(),-.:;?`'
+PUNC = '!$%&*\'(),-.:;?`'
 SPACE = ' '
 NUMBERS = '0123456789'
 SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
