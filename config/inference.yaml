@@ -1,7 +1,7 @@
 tier: 6
 checkpoints: [
-  #'/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_unconditional.pt' # Google Colab
-  #'~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_unconditional.pt' # Local machine
-  '../input/output/tremendous_storytime/tremendous_storytime.pt' # Kaggle
+  #'/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_chkpt_1.pt' # Google Colab
+  #'~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_chkpt_1.pt' # Local machine
+  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_chkpt_1.pt' # Kaggle
 ]
 conditional: True
