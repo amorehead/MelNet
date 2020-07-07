@@ -59,7 +59,6 @@ import yaml
 
 from torch.utils.tensorboard import SummaryWriter
 import matplotlib
-
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -70,19 +69,20 @@ from unidecode import unidecode  # Added to support LJ_speech
 import inflect
 
 import nltk
-
 nltk.download('punkt')
 
 from torch.utils.data import Dataset, DataLoader
 import glob
+
 
 # In[ ]:
 
 
 # Define constants in "constant.py"
 # x:y = tiers:(axis should be divisible by)
-t_div = {1: 1, 2: 1, 3: 2, 4: 2, 5: 4, 6: 4}
-f_div = {1: 1, 2: 1, 3: 2, 4: 2, 5: 4, 6: 4, 7: 8}
+t_div = {1:1, 2:1, 3:2, 4:2, 5:4, 6:4}
+f_div = {1:1, 2:1, 3:2, 4:2, 5:4, 6:4, 7:8}
+
 
 # In[ ]:
 
@@ -90,12 +90,13 @@ f_div = {1: 1, 2: 1, 3: 2, 4: 2, 5: 4, 6: 4, 7: 8}
 # Define constants in "utils.py"
 PAD = '_'
 EOS = '~'
-PUNC = '!$%&*\'(),-.:;"\\?`/'
+PUNC = '!$%&*\'()+,-.:;"\\?`/'
 SPACE = ' '
 NUMBERS = '0123456789'
 SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE
 _symbol_to_id = {s: i for i, s in enumerate(en_symbols)}
+
 
 # In[ ]:
 
@@ -103,7 +104,7 @@ _symbol_to_id = {s: i for i, s in enumerate(en_symbols)}
 # Define constants from "korean.py"
 PAD = '_'
 EOS = '~'
-PUNC = '!\'(),-.:;?'
+PUNC = '!$%&*\'()+,-.:;"\\?`/'
 SPACE = ' '
 
 JAMO_LEADS = "".join([chr(_) for _ in range(0x1100, 0x1113)])
@@ -119,56 +120,56 @@ id_to_char = {i: c for i, c in enumerate(ALL_SYMBOLS)}
 quote_checker = """([`"'＂“‘])(.+?)([`"'＂”’])"""
 
 num_to_kor = {
-    '0': '영',
-    '1': '일',
-    '2': '이',
-    '3': '삼',
-    '4': '사',
-    '5': '오',
-    '6': '육',
-    '7': '칠',
-    '8': '팔',
-    '9': '구',
+        '0': '영',
+        '1': '일',
+        '2': '이',
+        '3': '삼',
+        '4': '사',
+        '5': '오',
+        '6': '육',
+        '7': '칠',
+        '8': '팔',
+        '9': '구',
 }
 
 unit_to_kor1 = {
-    '%': '퍼센트',
-    'cm': '센치미터',
-    'mm': '밀리미터',
-    'km': '킬로미터',
-    'kg': '킬로그람',
+        '%': '퍼센트',
+        'cm': '센치미터',
+        'mm': '밀리미터',
+        'km': '킬로미터',
+        'kg': '킬로그람',
 }
 unit_to_kor2 = {
-    'm': '미터',
+        'm': '미터',
 }
 
 upper_to_kor = {
-    'A': '에이',
-    'B': '비',
-    'C': '씨',
-    'D': '디',
-    'E': '이',
-    'F': '에프',
-    'G': '지',
-    'H': '에이치',
-    'I': '아이',
-    'J': '제이',
-    'K': '케이',
-    'L': '엘',
-    'M': '엠',
-    'N': '엔',
-    'O': '오',
-    'P': '피',
-    'Q': '큐',
-    'R': '알',
-    'S': '에스',
-    'T': '티',
-    'U': '유',
-    'V': '브이',
-    'W': '더블유',
-    'X': '엑스',
-    'Y': '와이',
-    'Z': '지',
+        'A': '에이',
+        'B': '비',
+        'C': '씨',
+        'D': '디',
+        'E': '이',
+        'F': '에프',
+        'G': '지',
+        'H': '에이치',
+        'I': '아이',
+        'J': '제이',
+        'K': '케이',
+        'L': '엘',
+        'M': '엠',
+        'N': '엔',
+        'O': '오',
+        'P': '피',
+        'Q': '큐',
+        'R': '알',
+        'S': '에스',
+        'T': '티',
+        'U': '유',
+        'V': '브이',
+        'W': '더블유',
+        'X': '엑스',
+        'Y': '와이',
+        'Z': '지',
 }
 
 number_checker = "([+-]?\d[\d,]*)[\.]?\d*"
@@ -178,20 +179,21 @@ num_to_kor1 = [""] + list("일이삼사오육칠팔구")
 num_to_kor2 = [""] + list("만억조경해")
 num_to_kor3 = [""] + list("십백천")
 
-# count_to_kor1 = [""] + ["하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉"]
-count_to_kor1 = [""] + ["한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉"]
+#count_to_kor1 = [""] + ["하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉"]
+count_to_kor1 = [""] + ["한","두","세","네","다섯","여섯","일곱","여덟","아홉"]
 
 count_tenth_dict = {
-    "십": "열",
-    "두십": "스물",
-    "세십": "서른",
-    "네십": "마흔",
-    "다섯십": "쉰",
-    "여섯십": "예순",
-    "일곱십": "일흔",
-    "여덟십": "여든",
-    "아홉십": "아흔",
+        "십": "열",
+        "두십": "스물",
+        "세십": "서른",
+        "네십": "마흔",
+        "다섯십": "쉰",
+        "여섯십": "예순",
+        "일곱십": "일흔",
+        "여덟십": "여든",
+        "아홉십": "아흔",
 }
+
 
 # In[ ]:
 
@@ -206,8 +208,8 @@ through Unidecode. For other data, you can modify _characters. See TRAINING_DATA
 '''
 
 # For english
-en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE  # <-For deployment(Because korean ALL_SYMBOLS follow this convention)
-symbols = ALL_SYMBOLS  # for korean
+en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE  #<-For deployment(Because korean ALL_SYMBOLS follow this convention)
+symbols = ALL_SYMBOLS # for korean
 
 """
 초성과 종성은 같아보이지만, 다른 character이다.
@@ -224,6 +226,7 @@ symbols = ALL_SYMBOLS  # for korean
 '(': 71, ')': 72, ',': 73, '-': 74, '.': 75, ':': 76, ';': 77, '?': 78, ' ': 79
 """
 
+
 # In[ ]:
 
 
@@ -231,184 +234,185 @@ symbols = ALL_SYMBOLS  # for korean
 # coding: utf-8
 
 etc_dictionary = {
-    '2 30대': '이삼십대',
-    '20~30대': '이삼십대',
-    '20, 30대': '이십대 삼십대',
-    '1+1': '원플러스원',
-    '3에서 6개월인': '3개월에서 육개월인',
+        '2 30대': '이삼십대',
+        '20~30대': '이삼십대',
+        '20, 30대': '이십대 삼십대',
+        '1+1': '원플러스원',
+        '3에서 6개월인': '3개월에서 육개월인',
 }
 
 english_dictionary = {
-    'Devsisters': '데브시스터즈',
-    'track': '트랙',
+        'Devsisters': '데브시스터즈',
+        'track': '트랙',
 
-    # krbook
-    'LA': '엘에이',
-    'LG': '엘지',
-    'KOREA': '코리아',
-    'JSA': '제이에스에이',
-    'PGA': '피지에이',
-    'GA': '지에이',
-    'idol': '아이돌',
-    'KTX': '케이티엑스',
-    'AC': '에이씨',
-    'DVD': '디비디',
-    'US': '유에스',
-    'CNN': '씨엔엔',
-    'LPGA': '엘피지에이',
-    'P': '피',
-    'L': '엘',
-    'T': '티',
-    'B': '비',
-    'C': '씨',
-    'BIFF': '비아이에프에프',
-    'GV': '지비',
+        # krbook
+        'LA': '엘에이',
+        'LG': '엘지',
+        'KOREA': '코리아',
+        'JSA': '제이에스에이',
+        'PGA': '피지에이',
+        'GA': '지에이',
+        'idol': '아이돌',
+        'KTX': '케이티엑스',
+        'AC': '에이씨',
+        'DVD': '디비디',
+        'US': '유에스',
+        'CNN': '씨엔엔',
+        'LPGA': '엘피지에이',
+        'P': '피',
+        'L': '엘',
+        'T': '티',
+        'B': '비',
+        'C': '씨',
+        'BIFF': '비아이에프에프',
+        'GV': '지비',
 
-    # JTBC
-    'IT': '아이티',
-    'IQ': '아이큐',
-    'JTBC': '제이티비씨',
-    'trickle down effect': '트리클 다운 이펙트',
-    'trickle up effect': '트리클 업 이펙트',
-    'down': '다운',
-    'up': '업',
-    'FCK': '에프씨케이',
-    'AP': '에이피',
-    'WHERETHEWILDTHINGSARE': '',
-    'Rashomon Effect': '',
-    'O': '오',
-    'OO': '오오',
-    'B': '비',
-    'GDP': '지디피',
-    'CIPA': '씨아이피에이',
-    'YS': '와이에스',
-    'Y': '와이',
-    'S': '에스',
-    'JTBC': '제이티비씨',
-    'PC': '피씨',
-    'bill': '빌',
-    'Halmuny': '하모니',  #####
-    'X': '엑스',
-    'SNS': '에스엔에스',
-    'ability': '어빌리티',
-    'shy': '',
-    'CCTV': '씨씨티비',
-    'IT': '아이티',
-    'the tenth man': '더 텐쓰 맨',  ####
-    'L': '엘',
-    'PC': '피씨',
-    'YSDJJPMB': '',  ########
-    'Content Attitude Timing': '컨텐트 애티튜드 타이밍',
-    'CAT': '캣',
-    'IS': '아이에스',
-    'SNS': '에스엔에스',
-    'K': '케이',
-    'Y': '와이',
-    'KDI': '케이디아이',
-    'DOC': '디오씨',
-    'CIA': '씨아이에이',
-    'PBS': '피비에스',
-    'D': '디',
-    'PPropertyPositionPowerPrisonP'
-    'S': '에스',
-    'francisco': '프란시스코',
-    'I': '아이',
-    'III': '아이아이',  ######
-    'No joke': '노 조크',
-    'BBK': '비비케이',
-    'LA': '엘에이',
-    'Don': '',
-    't worry be happy': ' 워리 비 해피',
-    'NO': '엔오',  #####
-    'it was our sky': '잇 워즈 아워 스카이',
-    'it is our sky': '잇 이즈 아워 스카이',  ####
-    'NEIS': '엔이아이에스',  #####
-    'IMF': '아이엠에프',
-    'apology': '어폴로지',
-    'humble': '험블',
-    'M': '엠',
-    'Nowhere Man': '노웨어 맨',
-    'The Tenth Man': '더 텐쓰 맨',
-    'PBS': '피비에스',
-    'BBC': '비비씨',
-    'MRJ': '엠알제이',
-    'CCTV': '씨씨티비',
-    'Pick me up': '픽 미 업',
-    'DNA': '디엔에이',
-    'UN': '유엔',
-    'STOP': '스탑',  #####
-    'PRESS': '프레스',  #####
-    'not to be': '낫 투비',
-    'Denial': '디나이얼',
-    'G': '지',
-    'IMF': '아이엠에프',
-    'GDP': '지디피',
-    'JTBC': '제이티비씨',
-    'Time flies like an arrow': '타임 플라이즈 라이크 언 애로우',
-    'DDT': '디디티',
-    'AI': '에이아이',
-    'Z': '제트',
-    'OECD': '오이씨디',
-    'N': '앤',
-    'A': '에이',
-    'MB': '엠비',
-    'EH': '이에이치',
-    'IS': '아이에스',
-    'TV': '티비',
-    'MIT': '엠아이티',
-    'KBO': '케이비오',
-    'I love America': '아이 러브 아메리카',
-    'SF': '에스에프',
-    'Q': '큐',
-    'KFX': '케이에프엑스',
-    'PM': '피엠',
-    'Prime Minister': '프라임 미니스터',
-    'Swordline': '스워드라인',
-    'TBS': '티비에스',
-    'DDT': '디디티',
-    'CS': '씨에스',
-    'Reflecting Absence': '리플렉팅 앱센스',
-    'PBS': '피비에스',
-    'Drum being beaten by everyone': '드럼 빙 비튼 바이 에브리원',
-    'negative pressure': '네거티브 프레셔',
-    'F': '에프',
-    'KIA': '기아',
-    'FTA': '에프티에이',
-    'Que sais-je': '',
-    'UFC': '유에프씨',
-    'P': '피',
-    'DJ': '디제이',
-    'Chaebol': '채벌',
-    'BBC': '비비씨',
-    'OECD': '오이씨디',
-    'BC': '삐씨',
-    'C': '씨',
-    'B': '씨',
-    'KY': '케이와이',
-    'K': '케이',
-    'CEO': '씨이오',
-    'YH': '와이에치',
-    'IS': '아이에스',
-    'who are you': '후 얼 유',
-    'Y': '와이',
-    'The Devils Advocate': '더 데빌즈 어드보카트',
-    'YS': '와이에스',
-    'so sorry': '쏘 쏘리',
-    'Santa': '산타',
-    'Big Endian': '빅 엔디안',
-    'Small Endian': '스몰 엔디안',
-    'Oh Captain My Captain': '오 캡틴 마이 캡틴',
-    'AIB': '에이아이비',
-    'K': '케이',
-    'PBS': '피비에스',
+        # JTBC
+        'IT': '아이티',
+        'IQ': '아이큐',
+        'JTBC': '제이티비씨',
+        'trickle down effect': '트리클 다운 이펙트',
+        'trickle up effect': '트리클 업 이펙트',
+        'down': '다운',
+        'up': '업',
+        'FCK': '에프씨케이',
+        'AP': '에이피',
+        'WHERETHEWILDTHINGSARE': '',
+        'Rashomon Effect': '',
+        'O': '오',
+        'OO': '오오',
+        'B': '비',
+        'GDP': '지디피',
+        'CIPA': '씨아이피에이',
+        'YS': '와이에스',
+        'Y': '와이',
+        'S': '에스',
+        'JTBC': '제이티비씨',
+        'PC': '피씨',
+        'bill': '빌',
+        'Halmuny': '하모니', #####
+        'X': '엑스',
+        'SNS': '에스엔에스',
+        'ability': '어빌리티',
+        'shy': '',
+        'CCTV': '씨씨티비',
+        'IT': '아이티',
+        'the tenth man': '더 텐쓰 맨', ####
+        'L': '엘',
+        'PC': '피씨',
+        'YSDJJPMB': '', ########
+        'Content Attitude Timing': '컨텐트 애티튜드 타이밍',
+        'CAT': '캣',
+        'IS': '아이에스',
+        'SNS': '에스엔에스',
+        'K': '케이',
+        'Y': '와이',
+        'KDI': '케이디아이',
+        'DOC': '디오씨',
+        'CIA': '씨아이에이',
+        'PBS': '피비에스',
+        'D': '디',
+        'PPropertyPositionPowerPrisonP'
+        'S': '에스',
+        'francisco': '프란시스코',
+        'I': '아이',
+        'III': '아이아이', ######
+        'No joke': '노 조크',
+        'BBK': '비비케이',
+        'LA': '엘에이',
+        'Don': '',
+        't worry be happy': ' 워리 비 해피',
+        'NO': '엔오', #####
+        'it was our sky': '잇 워즈 아워 스카이',
+        'it is our sky': '잇 이즈 아워 스카이', ####
+        'NEIS': '엔이아이에스', #####
+        'IMF': '아이엠에프',
+        'apology': '어폴로지',
+        'humble': '험블',
+        'M': '엠',
+        'Nowhere Man': '노웨어 맨',
+        'The Tenth Man': '더 텐쓰 맨',
+        'PBS': '피비에스',
+        'BBC': '비비씨',
+        'MRJ': '엠알제이',
+        'CCTV': '씨씨티비',
+        'Pick me up': '픽 미 업',
+        'DNA': '디엔에이',
+        'UN': '유엔',
+        'STOP': '스탑', #####
+        'PRESS': '프레스', #####
+        'not to be': '낫 투비',
+        'Denial': '디나이얼',
+        'G': '지',
+        'IMF': '아이엠에프',
+        'GDP': '지디피',
+        'JTBC': '제이티비씨',
+        'Time flies like an arrow': '타임 플라이즈 라이크 언 애로우',
+        'DDT': '디디티',
+        'AI': '에이아이',
+        'Z': '제트',
+        'OECD': '오이씨디',
+        'N': '앤',
+        'A': '에이',
+        'MB': '엠비',
+        'EH': '이에이치',
+        'IS': '아이에스',
+        'TV': '티비',
+        'MIT': '엠아이티',
+        'KBO': '케이비오',
+        'I love America': '아이 러브 아메리카',
+        'SF': '에스에프',
+        'Q': '큐',
+        'KFX': '케이에프엑스',
+        'PM': '피엠',
+        'Prime Minister': '프라임 미니스터',
+        'Swordline': '스워드라인',
+        'TBS': '티비에스',
+        'DDT': '디디티',
+        'CS': '씨에스',
+        'Reflecting Absence': '리플렉팅 앱센스',
+        'PBS': '피비에스',
+        'Drum being beaten by everyone': '드럼 빙 비튼 바이 에브리원',
+        'negative pressure': '네거티브 프레셔',
+        'F': '에프',
+        'KIA': '기아',
+        'FTA': '에프티에이',
+        'Que sais-je': '',
+        'UFC': '유에프씨',
+        'P': '피',
+        'DJ': '디제이',
+        'Chaebol': '채벌',
+        'BBC': '비비씨',
+        'OECD': '오이씨디',
+        'BC': '삐씨',
+        'C': '씨',
+        'B': '씨',
+        'KY': '케이와이',
+        'K': '케이',
+        'CEO': '씨이오',
+        'YH': '와이에치',
+        'IS': '아이에스',
+        'who are you': '후 얼 유',
+        'Y': '와이',
+        'The Devils Advocate': '더 데빌즈 어드보카트',
+        'YS': '와이에스',
+        'so sorry': '쏘 쏘리',
+        'Santa': '산타',
+        'Big Endian': '빅 엔디안',
+        'Small Endian': '스몰 엔디안',
+        'Oh Captain My Captain': '오 캡틴 마이 캡틴',
+        'AIB': '에이아이비',
+        'K': '케이',
+        'PBS': '피비에스',
 }
+
 
 # In[ ]:
 
 
 # Define constants from "__init__.py"
 # Mappings from symbol to numeric ID and vice versa (Korean characters disabled in 'main()'):
-_symbol_to_id = {s: i for i, s in enumerate(en_symbols)}  # 80개
+_symbol_to_id = {s: i for i, s in enumerate(en_symbols)}   # 80개
 _id_to_symbol = {i: s for i, s in enumerate(en_symbols)}
 isEn = True
 
@@ -416,6 +420,7 @@ isEn = True
 _curly_re = re.compile(r'(.*?)\{(.+?)\}(.*)')
 
 puncuation_table = str.maketrans({key: None for key in string.punctuation})
+
 
 # In[ ]:
 
@@ -459,6 +464,7 @@ _abbreviations = [(re.compile('\\b%s\\.' % x[0], re.IGNORECASE), x[1]) for x in 
     ('ft', 'fort'),
 ]]
 
+
 # In[ ]:
 
 
@@ -500,7 +506,6 @@ def create_dataloader(hp, args, train):
             collate_fn=AudioCollate()
         )
 
-
 class AudioOnlyDataset(Dataset):
     def __init__(self, hp, args, train):
         self.hp = hp
@@ -539,7 +544,6 @@ class AudioOnlyDataset(Dataset):
         source, target = self.tierutil.cut_divide_tiers(mel, self.tier)
 
         return source, target
-
 
 class AudioTextDataset(Dataset):
     def __init__(self, hp, args, train):
@@ -621,7 +625,6 @@ class AudioTextDataset(Dataset):
 
         return seq, source, target
 
-
 class TextCollate():
     def __init__(self):
         return
@@ -643,7 +646,6 @@ class TextCollate():
         ).transpose(1, 2)
 
         return seq_padded, text_lengths, source_padded, target_padded, audio_lengths
-
 
 class AudioCollate():
     def __init__(self):
@@ -668,61 +670,61 @@ class AudioCollate():
 
 # Define helper functions from "en_numbers.py"
 def _remove_commas(m):
-    return m.group(1).replace(',', '')
+  return m.group(1).replace(',', '')
 
 
 def _expand_decimal_point(m):
-    return m.group(1).replace('.', ' point ')
+  return m.group(1).replace('.', ' point ')
 
 
 def _expand_dollars(m):
-    match = m.group(1)
-    parts = match.split('.')
-    if len(parts) > 2:
-        return match + ' dollars'  # Unexpected format
-    dollars = int(parts[0]) if parts[0] else 0
-    cents = int(parts[1]) if len(parts) > 1 and parts[1] else 0
-    if dollars and cents:
-        dollar_unit = 'dollar' if dollars == 1 else 'dollars'
-        cent_unit = 'cent' if cents == 1 else 'cents'
-        return '%s %s, %s %s' % (dollars, dollar_unit, cents, cent_unit)
-    elif dollars:
-        dollar_unit = 'dollar' if dollars == 1 else 'dollars'
-        return '%s %s' % (dollars, dollar_unit)
-    elif cents:
-        cent_unit = 'cent' if cents == 1 else 'cents'
-        return '%s %s' % (cents, cent_unit)
-    else:
-        return 'zero dollars'
+  match = m.group(1)
+  parts = match.split('.')
+  if len(parts) > 2:
+    return match + ' dollars'  # Unexpected format
+  dollars = int(parts[0]) if parts[0] else 0
+  cents = int(parts[1]) if len(parts) > 1 and parts[1] else 0
+  if dollars and cents:
+    dollar_unit = 'dollar' if dollars == 1 else 'dollars'
+    cent_unit = 'cent' if cents == 1 else 'cents'
+    return '%s %s, %s %s' % (dollars, dollar_unit, cents, cent_unit)
+  elif dollars:
+    dollar_unit = 'dollar' if dollars == 1 else 'dollars'
+    return '%s %s' % (dollars, dollar_unit)
+  elif cents:
+    cent_unit = 'cent' if cents == 1 else 'cents'
+    return '%s %s' % (cents, cent_unit)
+  else:
+    return 'zero dollars'
 
 
 def _expand_ordinal(m):
-    return _inflect.number_to_words(m.group(0))
+  return _inflect.number_to_words(m.group(0))
 
 
 def _expand_number(m):
-    num = int(m.group(0))
-    if num > 1000 and num < 3000:
-        if num == 2000:
-            return 'two thousand'
-        elif num > 2000 and num < 2010:
-            return 'two thousand ' + _inflect.number_to_words(num % 100)
-        elif num % 100 == 0:
-            return _inflect.number_to_words(num // 100) + ' hundred'
-        else:
-            return _inflect.number_to_words(num, andword='', zero='oh', group=2).replace(', ', ' ')
+  num = int(m.group(0))
+  if num > 1000 and num < 3000:
+    if num == 2000:
+      return 'two thousand'
+    elif num > 2000 and num < 2010:
+      return 'two thousand ' + _inflect.number_to_words(num % 100)
+    elif num % 100 == 0:
+      return _inflect.number_to_words(num // 100) + ' hundred'
     else:
-        return _inflect.number_to_words(num, andword='')
+      return _inflect.number_to_words(num, andword='', zero='oh', group=2).replace(', ', ' ')
+  else:
+    return _inflect.number_to_words(num, andword='')
 
 
 def normalize_numbers(text):
-    text = re.sub(_comma_number_re, _remove_commas, text)
-    text = re.sub(_pounds_re, r'\1 pounds', text)
-    text = re.sub(_dollars_re, _expand_dollars, text)
-    text = re.sub(_decimal_number_re, _expand_decimal_point, text)
-    text = re.sub(_ordinal_re, _expand_ordinal, text)
-    text = re.sub(_number_re, _expand_number, text)
-    return text
+  text = re.sub(_comma_number_re, _remove_commas, text)
+  text = re.sub(_pounds_re, r'\1 pounds', text)
+  text = re.sub(_dollars_re, _expand_dollars, text)
+  text = re.sub(_decimal_number_re, _expand_decimal_point, text)
+  text = re.sub(_ordinal_re, _expand_ordinal, text)
+  text = re.sub(_number_re, _expand_number, text)
+  return text
 
 
 # In[ ]:
@@ -731,7 +733,7 @@ def normalize_numbers(text):
 # Define helper functions from "cleaners.py"
 def korean_cleaners(text):
     '''Pipeline for Korean text, including number and abbreviation expansion.'''
-    text = tokenize(text)  # '존경하는' --> ['ᄌ', 'ᅩ', 'ᆫ', 'ᄀ', 'ᅧ', 'ᆼ', 'ᄒ', 'ᅡ', 'ᄂ', 'ᅳ', 'ᆫ', '~']
+    text = tokenize(text) # '존경하는' --> ['ᄌ', 'ᅩ', 'ᆫ', 'ᄀ', 'ᅧ', 'ᆼ', 'ᄒ', 'ᅡ', 'ᄂ', 'ᅳ', 'ᆫ', '~']
     return text
 
 
@@ -756,7 +758,7 @@ def collapse_whitespace(text):
 def convert_to_ascii(text):
     '''Converts to ascii, existed in keithito but deleted in carpedm20'''
     return unidecode(text)
-
+    
 
 def basic_cleaners(text):
     '''Basic pipeline that lowercases and collapses whitespace without transliteration.'''
@@ -796,7 +798,7 @@ def convert_to_en_symbols():
         print(" [!] Converting to english mode")
     PAD = '_'
     EOS = '~'
-    PUNC = '!$%&*\'(),-.:;"\\?`/'
+    PUNC = '!$%&*\'()+,-.:;"\\?`/'
     SPACE = ' '
     NUMBERS = '0123456789'
     SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -806,14 +808,11 @@ def convert_to_en_symbols():
     print(_symbol_to_id)
     isEn = True
 
-
 def remove_puncuations(text):
     return text.translate(puncuation_table)
 
-
-def text_to_sequence(text, cleaner_names=['korean_cleaners'], as_token=False):
+def text_to_sequence(text, cleaner_names=['korean_cleaners'], as_token=False):    
     return _text_to_sequence(text, cleaner_names, as_token)
-
 
 def _text_to_sequence(text, cleaner_names, as_token):
     '''Converts a string of text to a sequence of IDs corresponding to the symbols in the text.
@@ -851,7 +850,7 @@ def _text_to_sequence(text, cleaner_names, as_token):
 
 def sequence_to_text(sequence, skip_eos_and_pad=False, combine_jamo=False):
     '''Converts a sequence of IDs back to a string'''
-
+        
     result = ''
     for symbol_id in sequence:
         if symbol_id in _id_to_symbol:
@@ -871,12 +870,14 @@ def sequence_to_text(sequence, skip_eos_and_pad=False, combine_jamo=False):
         return result
 
 
+
 def _clean_text(text, cleaner_names):
+    
     for name in cleaner_names:
         cleaner = getattr(cleaners, name)
         if not cleaner:
             raise Exception('Unknown cleaner: %s' % name)
-        text = cleaner(text)  # '존경하는' --> ['ᄌ', 'ᅩ', 'ᆫ', 'ᄀ', 'ᅧ', 'ᆼ', 'ᄒ', 'ᅡ', 'ᄂ', 'ᅳ', 'ᆫ', '~']
+        text = cleaner(text) # '존경하는' --> ['ᄌ', 'ᅩ', 'ᆫ', 'ᄀ', 'ᅧ', 'ᆼ', 'ᄒ', 'ᅡ', 'ᄂ', 'ᅳ', 'ᆫ', '~']
 
     return text
 
@@ -900,14 +901,11 @@ def _should_keep_symbol(s):
 def is_lead(char):
     return char in JAMO_LEADS
 
-
 def is_vowel(char):
     return char in JAMO_VOWELS
 
-
 def is_tail(char):
     return char in JAMO_TAILS
-
 
 def get_mode(char):
     if is_lead(char):
@@ -919,7 +917,6 @@ def get_mode(char):
     else:
         return -1
 
-
 def _get_text_from_candidates(candidates):
     if len(candidates) == 0:
         return ""
@@ -927,7 +924,6 @@ def _get_text_from_candidates(candidates):
         return _jamo_char_to_hcj(candidates[0])
     else:
         return j2h(**dict(zip(["lead", "vowel", "tail"], candidates)))
-
 
 def jamo_to_korean(text):
     text = h2j(text)
@@ -957,25 +953,21 @@ def jamo_to_korean(text):
         idx += 1
     return new_text
 
-
 def compare_sentence_with_jamo(text1, text2):
     return h2j(text1) != h2j(text2)
-
 
 def tokenize(text, as_id=False):
     # jamo package에 있는 hangul_to_jamo를 이용하여 한글 string을 초성/중성/종성으로 나눈다.
     text = normalize(text)
-    tokens = list(hangul_to_jamo(text))  # '존경하는'  --> ['ᄌ', 'ᅩ', 'ᆫ', 'ᄀ', 'ᅧ', 'ᆼ', 'ᄒ', 'ᅡ', 'ᄂ', 'ᅳ', 'ᆫ', '~']
+    tokens = list(hangul_to_jamo(text)) # '존경하는'  --> ['ᄌ', 'ᅩ', 'ᆫ', 'ᄀ', 'ᅧ', 'ᆼ', 'ᄒ', 'ᅡ', 'ᄂ', 'ᅳ', 'ᆫ', '~']
 
     if as_id:
         return [char_to_id[token] for token in tokens] + [char_to_id[EOS]]
     else:
         return [token for token in tokens] + [EOS]
 
-
 def tokenizer_fn(iterator):
     return (token for x in iterator for token in tokenize(x, as_id=False))
-
 
 def normalize(text):
     text = text.strip()
@@ -992,14 +984,12 @@ def normalize(text):
 
     return text
 
-
 def normalize_with_dictionary(text, dic):
     if any(key in text for key in dic.keys()):
         pattern = re.compile('|'.join(re.escape(key) for key in dic.keys()))
         return pattern.sub(lambda x: dic[x.group()], text)
     else:
         return text
-
 
 def normalize_english(text):
     def fn(m):
@@ -1012,7 +1002,6 @@ def normalize_english(text):
     text = re.sub("([A-Za-z]+)", fn, text)
     return text
 
-
 def normalize_upper(text):
     text = text.group(0)
 
@@ -1021,10 +1010,9 @@ def normalize_upper(text):
     else:
         return text
 
-
 def normalize_quote(text):
     def fn(found_text):
-        from nltk import sent_tokenize  # NLTK doesn't along with multiprocessing
+        from nltk import sent_tokenize # NLTK doesn't along with multiprocessing
 
         found_text = found_text.group()
         unquoted_text = found_text[1:-1]
@@ -1034,23 +1022,21 @@ def normalize_quote(text):
 
     return re.sub(quote_checker, fn, text)
 
-
 def normalize_number(text):
     text = normalize_with_dictionary(text, unit_to_kor1)
     text = normalize_with_dictionary(text, unit_to_kor2)
     text = re.sub(number_checker + count_checker,
-                  lambda x: number_to_korean(x, True), text)
+            lambda x: number_to_korean(x, True), text)
     text = re.sub(number_checker,
-                  lambda x: number_to_korean(x, False), text)
+            lambda x: number_to_korean(x, False), text)
     return text
-
 
 def number_to_korean(num_str, is_count=False):
     if is_count:
         num_str, unit_str = num_str.group(1), num_str.group(2)
     else:
         num_str, unit_str = num_str.group(), ""
-
+    
     num_str = num_str.replace(',', '')
     num = ast.literal_eval(num_str)
 
@@ -1099,8 +1085,8 @@ def number_to_korean(num_str, is_count=False):
 
         if any(word in kor for word in count_tenth_dict):
             kor = re.sub(
-                '|'.join(count_tenth_dict.keys()),
-                lambda x: count_tenth_dict[x.group()], kor)
+                    '|'.join(count_tenth_dict.keys()),
+                    lambda x: count_tenth_dict[x.group()], kor)
 
     if not is_count and kor.startswith("일") and len(kor) > 1:
         kor = kor[1:]
@@ -1125,8 +1111,7 @@ if __name__ == "__main__":
     def test_normalize(text):
         print(text)
         print(normalize(text))
-        print("=" * 30)
-
+        print("="*30)
 
     test_normalize("JTBC는 JTBCs를 DY는 A가 Absolute")
     test_normalize("오늘(13일) 3,600마리 강아지가")
@@ -1146,38 +1131,34 @@ def get_length(wavpath, sample_rate):
     audio = audiosegment.from_file(wavpath).resample(sample_rate_Hz=sample_rate)
     return audio.duration_seconds
 
-
 def process_blizzard(text: str):
     text = text.replace('@ ', '').replace('# ', '').replace('| ', '') + EOS
     seq = [_symbol_to_id[c] for c in text]
     return np.array(seq, dtype=np.int32)
-
 
 def process_trump(text: str):
     text = text.replace('@ ', '').replace('# ', '').replace('| ', '') + EOS
     seq = [_symbol_to_id[c] for c in text]
     return np.array(seq, dtype=np.int32)
 
-
 def get_commit_hash():
     message = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
     return message.strip().decode('utf-8')
 
-
 def read_wav_np(wavpath, sample_rate):
     audio = audiosegment.from_file(wavpath).resample(sample_rate_Hz=sample_rate)
     wav = audio.to_numpy_array()
-
+    
     if len(wav.shape) == 2:
         wav = wav.T.flatten()
-
+    
     if wav.dtype == np.int16:
         wav = wav / 32768.0
     elif wav.dtype == np.int32:
         wav = wav / 2147483648.0
     elif wav.dtype == np.uint8:
         wav = (wav - 128) / 128.0
-
+    
     wav = wav.astype(np.float32)
     return wav
 
@@ -1194,14 +1175,14 @@ def cut_wav(L, wav):
 
 
 def norm_wav(wav):
-    assert isinstance(wav, np.ndarray) and len(wav.shape) == 1, 'Wav file should be 1D numpy array'
-    return wav / np.max(np.abs(wav))
+    assert isinstance(wav, np.ndarray) and len(wav.shape)==1, 'Wav file should be 1D numpy array'
+    return wav / np.max( np.abs(wav) )
 
 
 def trim_wav(wav, threshold=0.01):
-    assert isinstance(wav, np.ndarray) and len(wav.shape) == 1, 'Wav file should be 1D numpy array'
-    cut = np.where((abs(wav) > threshold))[0]
-    wav = wav[cut[0]:(cut[-1] + 1)]
+    assert isinstance(wav, np.ndarray) and len(wav.shape)==1, 'Wav file should be 1D numpy array'
+    cut = np.where((abs(wav)>threshold))[0]
+    wav = wav[cut[0]:(cut[-1]+1)]
     return wav
 
 
@@ -1214,7 +1195,6 @@ def get_pi_indices(pi):
     rand = torch.rand(pi.shape[:-1] + (1,))
     indices = (cumsum < rand).sum(dim=-1)
     return indices.flatten().detach().numpy()
-
 
 def sample_gmm(mu, std, pi):
     std = std.exp()
@@ -1235,14 +1215,14 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
     if args.tts:
         model = TTS(
             hp=hp,
-            freq=hp.audio.n_mels // f_div[hp.model.tier + 1] * f_div[args.tier],
-            layers=hp.model.layers[args.tier - 1]
+            freq=hp.audio.n_mels // f_div[hp.model.tier+1] * f_div[args.tier],
+            layers=hp.model.layers[args.tier-1]
         )
     else:
         model = Tier(
             hp=hp,
-            freq=hp.audio.n_mels // f_div[hp.model.tier + 1] * f_div[args.tier],
-            layers=hp.model.layers[args.tier - 1],
+            freq=hp.audio.n_mels // f_div[hp.model.tier+1] * f_div[args.tier],
+            layers=hp.model.layers[args.tier-1],
             tierN=args.tier
         )
     model = nn.DataParallel(model).cuda()
@@ -1252,18 +1232,18 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
 
     if hp.train.optimizer == 'rmsprop':
         optimizer = torch.optim.RMSprop(
-            model.parameters(),
-            lr=hp.train.rmsprop.lr,
+            model.parameters(), 
+            lr=hp.train.rmsprop.lr, 
             momentum=hp.train.rmsprop.momentum
         )
     elif hp.train.optimizer == 'adam':
         optimizer = torch.optim.Adam(
-            model.parameters(),
+            model.parameters(), 
             lr=hp.train.adam.lr
         )
     elif hp.train.optimizer == 'SGD':
         optimizer = torch.optim.SGD(
-            model.parameters(),
+            model.parameters(), 
             lr=hp.train.sgd.lr
         )
     else:
@@ -1449,7 +1429,6 @@ def fig2np(fig):
     data = data.transpose(2, 0, 1)
     return data
 
-
 def plot_spectrogram_to_numpy(spectrogram):
     fig, ax = plt.subplots(figsize=(8, 4))
     im = ax.imshow(spectrogram, aspect='auto', origin='lower',
@@ -1497,7 +1476,7 @@ class HParam(Dotdict):
         hp_dotdict = Dotdict(hp_dict)
         for k, v in hp_dotdict.items():
             setattr(self, k, v)
-
+            
     __getattr__ = Dotdict.__getitem__
     __setattr__ = Dotdict.__setitem__
     __delattr__ = Dotdict.__delitem__
@@ -1544,7 +1523,7 @@ class Tier(nn.Module):
         self.hp = hp
         self.tierN = tierN
 
-        if (tierN == 1):
+        if(tierN == 1):
             self.W_t_0 = nn.Linear(1, num_hidden)
             self.W_f_0 = nn.Linear(1, num_hidden)
             self.W_c_0 = nn.Linear(freq, num_hidden)
@@ -1562,7 +1541,7 @@ class Tier(nn.Module):
         self.pi_softmax = nn.Softmax(dim=3)
 
         # map output to produce GMM parameter eq. (10)
-        self.W_theta = nn.Linear(num_hidden, 3 * self.K)
+        self.W_theta = nn.Linear(num_hidden, 3*self.K)
 
     def forward(self, x, audio_lengths):
         # x: [B, M, T] / B=batch, M=mel, T=time
@@ -1582,9 +1561,9 @@ class Tier(nn.Module):
 
         theta_hat = self.W_theta(h_f)
 
-        mu = theta_hat[..., :self.K]  # eq. (3)
-        std = theta_hat[..., self.K:2 * self.K]
-        pi = theta_hat[..., 2 * self.K:]
+        mu = theta_hat[..., :self.K] # eq. (3)
+        std = theta_hat[..., self.K:2*self.K]
+        pi = theta_hat[..., 2*self.K:]
 
         return mu, std, pi
 
@@ -1622,10 +1601,10 @@ class DelayedRNN(nn.Module):
             batch_first=True
         )
 
-        self.W_t = nn.Linear(3 * self.num_hidden, self.num_hidden)
+        self.W_t = nn.Linear(3*self.num_hidden, self.num_hidden)
         self.W_c = nn.Linear(self.num_hidden, self.num_hidden)
         self.W_f = nn.Linear(self.num_hidden, self.num_hidden)
-
+   
     def flatten_rnn(self):
         self.t_delay_RNN_x.flatten_parameters()
         self.t_delay_RNN_yz.flatten_parameters()
@@ -1633,6 +1612,7 @@ class DelayedRNN(nn.Module):
         self.f_delay_RNN.flatten_parameters()
 
     def forward(self, input_h_t, input_h_f, input_h_c, audio_lengths):
+      
         self.flatten_rnn()
         # input_h_t, input_h_f: [B, M, T, D]
         # input_h_c: [B, T, D]
@@ -1657,14 +1637,14 @@ class DelayedRNN(nn.Module):
 
         # Fig. 2(a)-2,3 can be parallelized by viewing each vertical line as batch,
         # using bi-directional version of GRU
-        h_t_yz_temp = input_h_t.transpose(1, 2).contiguous()  # [B, T, M, D]
+        h_t_yz_temp = input_h_t.transpose(1, 2).contiguous() # [B, T, M, D]
         h_t_yz_temp = h_t_yz_temp.view(-1, M, D)
         h_t_yz, _ = self.t_delay_RNN_yz(h_t_yz_temp)
-        h_t_yz = h_t_yz.view(B, T, M, 2 * D)
+        h_t_yz = h_t_yz.view(B, T, M, 2*D)
         h_t_yz = h_t_yz.transpose(1, 2)
 
         h_t_concat = torch.cat((h_t_x, h_t_yz), dim=3)
-        output_h_t = input_h_t + self.W_t(h_t_concat)  # residual connection, eq. (6)
+        output_h_t = input_h_t + self.W_t(h_t_concat) # residual connection, eq. (6)
 
         ####### centralized stack #######
         h_c_temp = nn.utils.rnn.pack_padded_sequence(
@@ -1679,20 +1659,20 @@ class DelayedRNN(nn.Module):
             batch_first=True,
             total_length=T
         )
-
-        output_h_c = input_h_c + self.W_c(h_c_temp)  # residual connection, eq. (11)
+            
+        output_h_c = input_h_c + self.W_c(h_c_temp) # residual connection, eq. (11)
         h_c_expanded = output_h_c.unsqueeze(1)
 
         ####### frequency-delayed stack #######
         h_f_sum = input_h_f + output_h_t + h_c_expanded
-        h_f_sum = h_f_sum.transpose(1, 2).contiguous()  # [B, T, M, D]
+        h_f_sum = h_f_sum.transpose(1, 2).contiguous() # [B, T, M, D]
         h_f_sum = h_f_sum.view(-1, M, D)
 
         h_f_temp, _ = self.f_delay_RNN(h_f_sum)
         h_f_temp = h_f_temp.view(B, T, M, D)
-        h_f_temp = h_f_temp.transpose(1, 2)  # [B, M, T, D]
-
-        output_h_f = input_h_f + self.W_f(h_f_temp)  # residual connection, eq. (8)
+        h_f_temp = h_f_temp.transpose(1, 2) # [B, M, T, D]
+        
+        output_h_f = input_h_f + self.W_f(h_f_temp) # residual connection, eq. (8)
 
         return output_h_t, output_h_f, output_h_c
 
@@ -1727,7 +1707,7 @@ class UpsampleRNN(nn.Module):
 
     def forward(self, inp, audio_lengths):
         self.flatten_parameters()
-
+        
         B, M, T, D = inp.size()
 
         inp_temp = inp.view(-1, T, D)
@@ -1764,22 +1744,22 @@ class Attention(nn.Module):
         super(Attention, self).__init__()
         self.M = hp.model.gmm
         self.rnn_cell = nn.LSTMCell(
-            input_size=2 * hp.model.hidden,
+            input_size=2*hp.model.hidden,
             hidden_size=hp.model.hidden
         )
-        self.W_g = nn.Linear(hp.model.hidden, 3 * self.M)
-
+        self.W_g = nn.Linear(hp.model.hidden, 3*self.M)
+        
     def attention(self, h_i, memory, ksi):
         phi_hat = self.W_g(h_i)
 
         ksi = ksi + torch.exp(phi_hat[:, :self.M])
-        beta = torch.exp(phi_hat[:, self.M:2 * self.M])
-        alpha = F.softmax(phi_hat[:, 2 * self.M:3 * self.M], dim=-1)
-
+        beta = torch.exp(phi_hat[:, self.M:2*self.M])
+        alpha = F.softmax(phi_hat[:, 2*self.M:3*self.M], dim=-1)
+        
         u = memory.new_tensor(np.arange(memory.size(1)), dtype=torch.float)
         u_R = u + 1.5
         u_L = u + 0.5
-
+        
         term1 = torch.sum(
             alpha.unsqueeze(-1) * torch.sigmoid(
                 (u_R - ksi.unsqueeze(-1)) / beta.unsqueeze(-1)
@@ -1787,7 +1767,7 @@ class Attention(nn.Module):
             keepdim=True,
             dim=1
         )
-
+        
         term2 = torch.sum(
             alpha.unsqueeze(-1) * torch.sigmoid(
                 (u_L - ksi.unsqueeze(-1)) / beta.unsqueeze(-1)
@@ -1795,36 +1775,39 @@ class Attention(nn.Module):
             keepdim=True,
             dim=1
         )
-
+        
         weights = term1 - term2
-
+        
         context = torch.bmm(weights, memory)
-
+        
         termination = 1 - term1.squeeze(1)
 
-        return context, weights, termination, ksi  # (B, 1, D), (B, 1, T), (B, T)
+        return context, weights, termination, ksi # (B, 1, D), (B, 1, T), (B, T)
 
+    
+    
     def forward(self, input_h_c, memory):
         B, T, D = input_h_c.size()
-
+        
         context = input_h_c.new_zeros(B, D)
-        h_i, c_i = input_h_c.new_zeros(B, D), input_h_c.new_zeros(B, D)
+        h_i, c_i  = input_h_c.new_zeros(B, D), input_h_c.new_zeros(B, D)
         ksi = input_h_c.new_zeros(B, self.M)
-
+        
         contexts, weights = [], []
         for i in range(T):
             x = torch.cat([input_h_c[:, i], context.squeeze(1)], dim=-1)
             h_i, c_i = self.rnn_cell(x, (h_i, c_i))
             context, weight, termination, ksi = self.attention(h_i, memory, ksi)
-
+            
             contexts.append(context)
             weights.append(weight)
-
+            
         contexts = torch.cat(contexts, dim=1) + input_h_c
         alignment = torch.cat(weights, dim=1)
         # termination = torch.gather(termination, 1, (input_lengths-1).unsqueeze(-1)) # 4
 
-        return contexts, alignment  # , termination
+        return contexts, alignment#, termination
+
 
 
 class TTS(nn.Module):
@@ -1835,14 +1818,14 @@ class TTS(nn.Module):
         self.W_t_0 = nn.Linear(1, hp.model.hidden)
         self.W_f_0 = nn.Linear(1, hp.model.hidden)
         self.W_c_0 = nn.Linear(freq, hp.model.hidden)
-
+        
         self.layers = nn.ModuleList([DelayedRNN(hp) for _ in range(layers)])
 
         # Gaussian Mixture Model: eq. (2)
         self.K = hp.model.gmm
 
         # map output to produce GMM parameter eq. (10)
-        self.W_theta = nn.Linear(hp.model.hidden, 3 * self.K)
+        self.W_theta = nn.Linear(hp.model.hidden, 3*self.K)
 
         if self.hp.data.name == 'KSS':
             self.embedding_text = nn.Embedding(len(symbols), hp.model.hidden)
@@ -1855,11 +1838,11 @@ class TTS(nn.Module):
 
         self.text_lstm = nn.LSTM(
             input_size=hp.model.hidden,
-            hidden_size=hp.model.hidden // 2,
+            hidden_size=hp.model.hidden//2, 
             batch_first=True,
             bidirectional=True
         )
-
+        
         self.attention = Attention(hp)
 
     def text_encode(self, text, text_lengths):
@@ -1878,31 +1861,31 @@ class TTS(nn.Module):
             total_length=total_length
         )
         return unpacked
-
+        
     def forward(self, x, text, text_lengths, audio_lengths):
         # Extract memory
         memory = self.text_encode(text, text_lengths)
-
+        
         # x: [B, M, T] / B=batch, M=mel, T=time
         h_t = self.W_t_0(F.pad(x, [1, -1]).unsqueeze(-1))
         h_f = self.W_f_0(F.pad(x, [0, 0, 1, -1]).unsqueeze(-1))
         h_c = self.W_c_0(F.pad(x, [1, -1]).transpose(1, 2))
-
+        
         # h_t, h_f: [B, M, T, D] / h_c: [B, T, D]
         for i, layer in enumerate(self.layers):
-            if i != (len(self.layers) // 2):
+            if i != (len(self.layers)//2):
                 h_t, h_f, h_c = layer(h_t, h_f, h_c, audio_lengths)
-
+                
             else:
                 h_c, alignment = self.attention(h_c, memory)
                 h_t, h_f, h_c = layer(h_t, h_f, h_c, audio_lengths)
 
         theta_hat = self.W_theta(h_f)
 
-        mu = theta_hat[..., :self.K]  # eq. (3)
-        std = theta_hat[..., self.K:2 * self.K]  # eq. (4)
-        pi = theta_hat[..., 2 * self.K:]  # eq. (5)
-
+        mu = theta_hat[..., :self.K] # eq. (3)
+        std = theta_hat[..., self.K:2*self.K] # eq. (4)
+        pi = theta_hat[..., 2*self.K:] # eq. (5)
+            
         return mu, std, pi, alignment
 
 
@@ -2000,12 +1983,12 @@ class TierUtil():
     def cut_divide_tiers(self, x, tierNo):
         x = x[:, :x.shape[-1] - x.shape[-1] % self.t_div]
         M, T = x.shape
-        assert M % self.f_div == 0, 'freq(mel) dimension should be divisible by %d, got %d.' % (self.f_div, M)
-        assert T % self.t_div == 0, 'time dimension should be divisible by %d, got %d.' % (self.t_div, T)
+        assert M % self.f_div == 0,             'freq(mel) dimension should be divisible by %d, got %d.'             % (self.f_div, M)
+        assert T % self.t_div == 0,             'time dimension should be divisible by %d, got %d.'             % (self.t_div, T)
 
         tiers = list()
-        for i in range(self.hp.model.tier, max(1, tierNo - 1), -1):
-            if i % 2 == 0:  # make consistent with utils/constant.py
+        for i in range(self.hp.model.tier, max(1, tierNo-1), -1):
+            if i % 2 == 0: # make consistent with utils/constant.py
                 tiers.append(x[1::2, :])
                 x = x[::2, :]
             else:
@@ -2026,7 +2009,7 @@ class TierUtil():
             y: x^{g}
             tier: g+1
         '''
-        assert x.size() == y.size(), 'two inputs for interleave should be identical: got %s, %s' % (x.size(), y.size())
+        assert x.size() == y.size(),             'two inputs for interleave should be identical: got %s, %s' % (x.size(), y.size())
 
         B, M, T = x.size()
         if tier % 2 == 0:
@@ -2084,7 +2067,7 @@ if __name__ == '__main__':
         format='%(asctime)s - %(levelname)s - %(message)s',
         handlers=[
             logging.FileHandler(os.path.join(log_dir,
-                                             '%s-%d.log' % (args.name, time.time()))),
+                '%s-%d.log' % (args.name, time.time()))),
             logging.StreamHandler()
         ]
     )
@@ -2092,8 +2075,9 @@ if __name__ == '__main__':
 
     writer = MyWriter(hp, log_dir)
 
-    assert hp.data.path != '', 'hp.data.path cannot be empty: please fill out your dataset\'s path in configuration yaml file.'
+    assert hp.data.path != '',         'hp.data.path cannot be empty: please fill out your dataset\'s path in configuration yaml file.'
     trainloader = create_dataloader(hp, args, train=True)
     testloader = create_dataloader(hp, args, train=False)
 
     train(args, pt_dir, args.checkpoint_path, trainloader, testloader, writer, logger, hp, hp_str)
+
