@@ -1,4 +1,4 @@
-tier: 6
+tier: 1
 checkpoints: [
   #'/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_chkpt_1.pt' # Google Colab
   #'~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_chkpt_1.pt' # Local machine
