@@ -90,7 +90,7 @@ f_div = {1: 1, 2: 1, 3: 2, 4: 2, 5: 4, 6: 4, 7: 8}
 # Define constants in "utils.py"
 PAD = '_'
 EOS = '~'
-PUNC = '!$%&*\'(),-.:;?`'
+PUNC = '!$%&*\'(),-.:;"\\?`/'
 SPACE = ' '
 NUMBERS = '0123456789'
 SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -796,7 +796,7 @@ def convert_to_en_symbols():
         print(" [!] Converting to english mode")
     PAD = '_'
     EOS = '~'
-    PUNC = '!$%&*\'(),-.:;?`'
+    PUNC = '!$%&*\'(),-.:;"\\?`/'
     SPACE = ' '
     NUMBERS = '0123456789'
     SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
