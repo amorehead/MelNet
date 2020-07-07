@@ -874,6 +874,7 @@ def sequence_to_text(sequence, skip_eos_and_pad=False, combine_jamo=False):
 def _clean_text(text, cleaner_names):
     
     for name in cleaner_names:
+        from text import cleaners
         cleaner = getattr(cleaners, name)
         if not cleaner:
             raise Exception('Unknown cleaner: %s' % name)
