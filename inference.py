@@ -80,10 +80,11 @@ f_div = {1: 1, 2: 1, 3: 2, 4: 2, 5: 4, 6: 4, 7: 8}
 # Define constants in "utils.py"
 PAD = '_'
 EOS = '~'
-PUNC = '!\'(),-.:;?`'
+PUNC = '!$%&*\'()+,-.:;"\\?`/'
 SPACE = ' '
+NUMBERS = '0123456789'
 SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-en_symbols = SYMBOLS + PAD + EOS + PUNC + SPACE
+en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE
 _symbol_to_id = {s: i for i, s in enumerate(en_symbols)}
 
 # In[ ]:
@@ -195,8 +196,7 @@ through Unidecode. For other data, you can modify _characters. See TRAINING_DATA
 '''
 
 # For english
-en_symbols = PAD + EOS + 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!\'(),-.:;? '  # <-For deployment(Because korean ALL_SYMBOLS follow this convention)
-
+en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE  # <-For deployment(Because korean ALL_SYMBOLS follow this convention)
 symbols = ALL_SYMBOLS  # for korean
 
 """
@@ -398,9 +398,9 @@ english_dictionary = {
 
 # Define constants from "__init__.py"
 # Mappings from symbol to numeric ID and vice versa:
-_symbol_to_id = {s: i for i, s in enumerate(symbols)}  # 80개
-_id_to_symbol = {i: s for i, s in enumerate(symbols)}
-isEn = False
+_symbol_to_id = {s: i for i, s in enumerate(en_symbols)}  # 80개
+_id_to_symbol = {i: s for i, s in enumerate(en_symbols)}
+isEn = True
 
 # Regular expression matching text enclosed in curly braces:
 _curly_re = re.compile(r'(.*?)\{(.+?)\}(.*)')
@@ -565,6 +565,17 @@ class AudioTextDataset(Dataset):
                     length = get_length(wav_path, hp.audio.sr)
                     if length < hp.audio.duration:
                         self.dataset.append((wav_path, sentence))
+
+        elif hp.data.name == 'Trump':
+            with open(os.path.join(self.root_dir, 'prompts.gui'), 'r') as f:
+                lines = f.read().splitlines()
+                filenames = lines[::3]
+                sentences = lines[1::3]
+                for filename, sentence in tqdm(zip(filenames, sentences), total=len(filenames)):
+                    wav_path = os.path.join(self.root_dir, filename)
+                    length = get_length(wav_path, hp.audio.sr)
+                    if length < hp.audio.duration:
+                        self.dataset.append((wav_path, sentence))
         else:
             raise NotImplementedError
 
@@ -590,6 +601,8 @@ class AudioTextDataset(Dataset):
             seq = text_to_sequence(text)
         elif self.hp.data.name == 'Blizzard':
             seq = process_blizzard(text)
+        elif self.hp.data.name == 'Trump':
+            seq = process_trump(text)
 
         wav = read_wav_np(self.dataset[idx][0], sample_rate=self.hp.audio.sr)
         # wav = cut_wav(self.wavlen, wav)
@@ -768,11 +781,19 @@ def convert_to_en_symbols():
     '''Converts built-in korean symbols to english, to be used for english training
     
 '''
-    global _symbol_to_id, _id_to_symbol, isEn
+    global _symbol_to_id, _id_to_symbol, isEn, en_symbols, PAD, EOS, PUNC, SPACE, NUMBERS, SYMBOLS
     if not isEn:
         print(" [!] Converting to english mode")
+    PAD = '_'
+    EOS = '~'
+    PUNC = '!$%&*\'()+,-.:;"\\?`/'
+    SPACE = ' '
+    NUMBERS = '0123456789'
+    SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE
     _symbol_to_id = {s: i for i, s in enumerate(en_symbols)}
     _id_to_symbol = {i: s for i, s in enumerate(en_symbols)}
+    print(_symbol_to_id)
     isEn = True
 
 
@@ -1117,6 +1138,12 @@ def get_length(wavpath, sample_rate):
 
 
 def process_blizzard(text: str):
+    text = text.replace('@ ', '').replace('# ', '').replace('| ', '') + EOS
+    seq = [_symbol_to_id[c] for c in text]
+    return np.array(seq, dtype=np.int32)
+
+
+def process_trump(text: str):
     text = text.replace('@ ', '').replace('# ', '').replace('| ', '') + EOS
     seq = [_symbol_to_id[c] for c in text]
     return np.array(seq, dtype=np.int32)
@@ -1811,6 +1838,8 @@ class TTS(nn.Module):
             self.embedding_text = nn.Embedding(len(symbols), hp.model.hidden)
         elif self.hp.data.name == 'Blizzard':
             self.embedding_text = nn.Embedding(len(en_symbols), hp.model.hidden)
+        elif self.hp.data.name == 'Trump':
+            self.embedding_text = nn.Embedding(len(en_symbols), hp.model.hidden)
         else:
             raise NotImplementedError
 
@@ -2152,6 +2181,7 @@ class Reconstruct():
 
 # Define main function of "inference.py"
 if __name__ == '__main__':
+    convert_to_en_symbols()
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type=str, required=True,
                         help="yaml file for configuration")
@@ -2169,7 +2199,7 @@ if __name__ == '__main__':
     infer_hp = HParam(args.infer_config)
 
     assert args.timestep % t_div[hp.model.tier] == 0, "timestep should be divisible by %d, got %d" % (
-        t_div[hp.model.tier], args.timestep)
+    t_div[hp.model.tier], args.timestep)
 
     model = MelNet(hp, args, infer_hp).cuda()
     model.load_tiers()
