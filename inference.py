@@ -1,17 +1,12 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
-
-
+# To add a new cell, type '# %%'
+# To add a new markdown cell, type '# %% [markdown]'
+# %%
 # import importlib
 # if importlib.util.find_spec('audiosegment') is None:
 #   !pip install audiosegment
 
 
-# In[3]:
-
-
+# %%
 # Define imports
 import os
 import time
@@ -65,18 +60,14 @@ from torch.utils.data import Dataset, DataLoader
 import glob
 
 
-# In[ ]:
-
-
+# %%
 # Define constants in "constant.py"
 # x:y = tiers:(axis should be divisible by)
 t_div = {1:1, 2:1, 3:2, 4:2, 5:4, 6:4}
 f_div = {1:1, 2:1, 3:2, 4:2, 5:4, 6:4, 7:8}
 
 
-# In[ ]:
-
-
+# %%
 # Define constants in "utils.py"
 PAD = '_'
 EOS = '~'
@@ -88,9 +79,7 @@ en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE
 _symbol_to_id = {s: i for i, s in enumerate(en_symbols)}
 
 
-# In[ ]:
-
-
+# %%
 # Define constants from "korean.py"
 PAD = '_'
 EOS = '~'
@@ -185,9 +174,7 @@ count_tenth_dict = {
 }
 
 
-# In[ ]:
-
-
+# %%
 # Define symbols from "symbols.py"
 # coding: utf-8
 '''
@@ -217,9 +204,7 @@ symbols = ALL_SYMBOLS # for korean
 """
 
 
-# In[ ]:
-
-
+# %%
 # Define constants from "ko_dictionary.py"
 # coding: utf-8
 
@@ -397,9 +382,7 @@ english_dictionary = {
 }
 
 
-# In[ ]:
-
-
+# %%
 # Define constants from "__init__.py"
 # Mappings from symbol to numeric ID and vice versa:
 _symbol_to_id = {s: i for i, s in enumerate(en_symbols)}   # 80개
@@ -413,9 +396,7 @@ _curly_re = re.compile(r'(.*?)\{(.+?)\}(.*)')
 puncuation_table = str.maketrans({key: None for key in string.punctuation})
 
 
-# In[ ]:
-
-
+# %%
 # Define constants for "cleaners.py"
 # Code based on https://github.com/keithito/tacotron/blob/master/text/cleaners.py
 '''
@@ -456,9 +437,7 @@ _abbreviations = [(re.compile('\\b%s\\.' % x[0], re.IGNORECASE), x[1]) for x in 
 ]]
 
 
-# In[ ]:
-
-
+# %%
 # Define constants from "en_numbers.py"
 _inflect = inflect.engine()
 _comma_number_re = re.compile(r'([0-9][0-9\,]+[0-9])')
@@ -469,9 +448,7 @@ _ordinal_re = re.compile(r'[0-9]+(st|nd|rd|th)')
 _number_re = re.compile(r'[0-9]+')
 
 
-# In[ ]:
-
-
+# %%
 # Define helper functions from "wavloader.py"
 def create_dataloader(hp, args, train):
     if args.tts:
@@ -656,9 +633,7 @@ class AudioCollate():
         return source_padded, target_padded, audio_lengths
 
 
-# In[ ]:
-
-
+# %%
 # Define helper functions from "en_numbers.py"
 def _remove_commas(m):
   return m.group(1).replace(',', '')
@@ -718,9 +693,7 @@ def normalize_numbers(text):
   return text
 
 
-# In[ ]:
-
-
+# %%
 # Define helper functions from "cleaners.py"
 def korean_cleaners(text):
     '''Pipeline for Korean text, including number and abbreviation expansion.'''
@@ -776,9 +749,7 @@ def english_cleaners(text):
     return text
 
 
-# In[ ]:
-
-
+# %%
 # Define helper functions from "__init__.py"
 def convert_to_en_symbols():
     '''Converts built-in korean symbols to english, to be used for english training
@@ -886,9 +857,7 @@ def _should_keep_symbol(s):
     return s in _symbol_to_id and s != '_' and s != '~'
 
 
-# In[ ]:
-
-
+# %%
 # Define helper functions in "korean.py"
 def is_lead(char):
     return char in JAMO_LEADS
@@ -1095,9 +1064,7 @@ def number_to_korean(num_str, is_count=False):
     return kor + unit_str
 
 
-# In[ ]:
-
-
+# %%
 # Test driver function for "korean.py"
 if __name__ == "__main__":
     def test_normalize(text):
@@ -1115,9 +1082,7 @@ if __name__ == "__main__":
     print(list(hangul_to_jamo(list(hangul_to_jamo('비대위원장이 지난 1월 이런 말을 했습니다? “난 그냥 산돼지처럼 돌파하는 스타일이다”')))))
 
 
-# In[ ]:
-
-
+# %%
 # Define helper functions in "utils.py"
 def get_length(wavpath, sample_rate):
     audio = audiosegment.from_file(wavpath).resample(sample_rate_Hz=sample_rate)
@@ -1178,9 +1143,7 @@ def trim_wav(wav, threshold=0.01):
     return wav
 
 
-# In[ ]:
-
-
+# %%
 # Define helper functions of "gmm.py"
 def get_pi_indices(pi):
     cumsum = torch.cumsum(pi.cpu(), dim=-1)
@@ -1199,9 +1162,7 @@ def sample_gmm(mu, std, pi):
     return torch.normal(mu, std).reshape_as(mu).clamp(0.0, 1.0).to(mu.device)
 
 
-# In[ ]:
-
-
+# %%
 # Define train function of "train.py"
 def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp, hp_str):
     if args.tts:
@@ -1329,9 +1290,7 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
         traceback.print_exc()
 
 
-# In[ ]:
-
-
+# %%
 # Define validate function from "validation.py"
 def validate(args, model, melgen, tierutil, testloader, criterion, writer, step):
     model.eval()
@@ -1377,9 +1336,7 @@ def validate(args, model, melgen, tierutil, testloader, criterion, writer, step)
     # torch.backends.cudnn.benchmark = True
 
 
-# In[ ]:
-
-
+# %%
 # Define helper functions from "hparams.py"
 def load_hparam_str(hp_str):
     path = os.path.join('temp-restore.yaml')
@@ -1410,9 +1367,7 @@ def merge_dict(user, default):
     return user
 
 
-# In[ ]:
-
-
+# %%
 # Define helper functions from "plotting.py"
 def fig2np(fig):
     # save it to a numpy array.
@@ -1436,9 +1391,7 @@ def plot_spectrogram_to_numpy(spectrogram):
     return data
 
 
-# In[ ]:
-
-
+# %%
 # Define classes of "hparams.py"
 class Dotdict(dict):
     """
@@ -1474,9 +1427,7 @@ class HParam(Dotdict):
     __delattr__ = Dotdict.__delitem__
 
 
-# In[ ]:
-
-
+# %%
 # Define MyWriter class from "writer.py"
 class MyWriter(SummaryWriter):
     def __init__(self, hp, logdir):
@@ -1504,9 +1455,7 @@ class MyWriter(SummaryWriter):
         raise NotImplementedError
 
 
-# In[ ]:
-
-
+# %%
 # Define tier class of "tier.py"
 class Tier(nn.Module):
     def __init__(self, hp, freq, layers, tierN):
@@ -1560,9 +1509,7 @@ class Tier(nn.Module):
         return mu, std, pi
 
 
-# In[ ]:
-
-
+# %%
 # Define delayedRNN class of "rnn.py"
 class DelayedRNN(nn.Module):
     def __init__(self, hp):
@@ -1669,9 +1616,7 @@ class DelayedRNN(nn.Module):
         return output_h_t, output_h_f, output_h_c
 
 
-# In[ ]:
-
-
+# %%
 # Define upsampleRNN of "upsample.py"
 class UpsampleRNN(nn.Module):
     def __init__(self, hp):
@@ -1727,9 +1672,7 @@ class UpsampleRNN(nn.Module):
         return output
 
 
-# In[2]:
-
-
+# %%
 # Define attention from "tts.py"
 class Attention(nn.Module):
     def __init__(self, hp):
@@ -1881,9 +1824,7 @@ class TTS(nn.Module):
         return mu, std, pi, alignment
 
 
-# In[ ]:
-
-
+# %%
 # Define GMMLoss from "loss.py"
 class GMMLoss(nn.Module):
     def __init__(self):
@@ -1920,9 +1861,7 @@ class GMMLoss(nn.Module):
         return loss
 
 
-# In[ ]:
-
-
+# %%
 # Define MelGen from "audio.py"
 class MelGen():
     def __init__(self, hp):
@@ -1953,9 +1892,7 @@ class MelGen():
         return (np.clip(x, 0.0, 1.0) - 1.0) * -self.hp.audio.min_level_db
 
 
-# In[ ]:
-
-
+# %%
 # Define TierUtil from "tierutil.py"
 class TierUtil():
     def __init__(self, hp):
@@ -2016,9 +1953,7 @@ class TierUtil():
         return temp
 
 
-# In[ ]:
-
-
+# %%
 # Define MelNet class from "model.py"
 class MelNet(nn.Module):
     def __init__(self, hp, args, infer_hp):
@@ -2098,13 +2033,14 @@ class MelNet(nn.Module):
 
             if self.hp != hp:
                 print('Warning: hp different in file %s' % chkpt_path)
+
+            print("The current checkpoint's IDX is", idx)
+            print("And the current checkpoint's path is", chkpt_path)
             
             self.tiers[idx+1].load_state_dict(checkpoint['model'])
 
 
-# In[ ]:
-
-
+# %%
 # Define Reconstruct class from "reconstruct.py"
 class Reconstruct():
     def __init__(self, hp):
@@ -2160,9 +2096,7 @@ class Reconstruct():
         return x, self.pre_spec(self.get_mel(x))
 
 
-# In[ ]:
-
-
+# %%
 # Define main function of "inference.py"
 if __name__ == '__main__':
     convert_to_en_symbols()
