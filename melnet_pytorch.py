@@ -774,7 +774,6 @@ def convert_to_en_symbols():
     en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE
     _symbol_to_id = {s: i for i, s in enumerate(en_symbols)}
     _id_to_symbol = {i: s for i, s in enumerate(en_symbols)}
-    print(_symbol_to_id)
     isEn = True
 
 def remove_puncuations(text):
@@ -1197,6 +1196,7 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
     step = 0
 
     if chkpt_path is not None:
+        print("Resuming from checkpoint: %s" % chkpt_path)
         logger.info("Resuming from checkpoint: %s" % chkpt_path)
         checkpoint = torch.load(chkpt_path)
         model.load_state_dict(checkpoint['model'])
@@ -1213,6 +1213,7 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
 
         # githash = checkpoint['githash']
     else:
+        print("Starting new training run.")
         logger.info("Starting new training run.")
 
     # use this only if input size is always consistent.
@@ -1260,8 +1261,13 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
                     logger.error("Loss exploded to %.04f at step %d!" % (loss, step))
                     raise Exception("Loss exploded")
 
-            save_path = os.path.join(pt_dir, '%s_%s_tier%d_%03d.pt')
-            # % (args.name, githash, args.tier, epoch))
+            save_path = os.path.join(pt_dir, '%s_tier%d_%03d.pt') % (
+                args.name, 
+                # githash,
+                args.tier, 
+                epoch
+            ))
+
             torch.save({
                 'model': model.state_dict(),
                 'optimizer': optimizer.state_dict(),
@@ -1270,11 +1276,14 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
                 'hp_str': hp_str,
                 # 'githash': githash,
             }, save_path)
+
+            print("Saved checkpoint to: %s" % save_path)
             logger.info("Saved checkpoint to: %s" % save_path)
 
             validate(args, model, melgen, tierutil, testloader, criterion, writer, step)
 
     except Exception as e:
+        print("Exiting due to exception: %s" % e)
         logger.info("Exiting due to exception: %s" % e)
         traceback.print_exc()
 
