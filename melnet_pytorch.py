@@ -1261,12 +1261,7 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
                     logger.error("Loss exploded to %.04f at step %d!" % (loss, step))
                     raise Exception("Loss exploded")
 
-            save_path = os.path.join(pt_dir, '%s_tier%d_%03d.pt') % (
-                args.name, 
-                # githash,
-                args.tier, 
-                epoch
-            ))
+            save_path = os.path.join(pt_dir, '%s_tier%d_%03d.pt') % (args.name, args.tier, epoch))
 
             torch.save({
                 'model': model.state_dict(),
