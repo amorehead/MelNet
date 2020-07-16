@@ -2006,7 +2006,7 @@ class MelNet(nn.Module):
         ## Tier 2~N ##
         for tier in tqdm(range(2, self.hp.model.tier + 1)):
             tqdm.write('Tier %d' % tier)
-            mu, std, pi = self.tiers[tier](x)
+            mu, std, pi = self.tiers[tier](x, audio_lengths)
             temp = sample_gmm(mu, std, pi)
             x = self.tierutil.interleave(x, temp, tier + 1)
 
