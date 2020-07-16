@@ -767,7 +767,6 @@ def convert_to_en_symbols():
     en_symbols = SYMBOLS + NUMBERS + PAD + EOS + PUNC + SPACE
     _symbol_to_id = {s: i for i, s in enumerate(en_symbols)}
     _id_to_symbol = {i: s for i, s in enumerate(en_symbols)}
-    print(_symbol_to_id)
     isEn = True
 
 def remove_puncuations(text):
@@ -1065,24 +1064,6 @@ def number_to_korean(num_str, is_count=False):
 
 
 # %%
-# Test driver function for "korean.py"
-if __name__ == "__main__":
-    def test_normalize(text):
-        print(text)
-        print(normalize(text))
-        print("="*30)
-
-    test_normalize("JTBC는 JTBCs를 DY는 A가 Absolute")
-    test_normalize("오늘(13일) 3,600마리 강아지가")
-    test_normalize("60.3%")
-    test_normalize('"저돌"(猪突) 입니다.')
-    test_normalize('비대위원장이 지난 1월 이런 말을 했습니다. “난 그냥 산돼지처럼 돌파하는 스타일이다”')
-    test_normalize("지금은 -12.35%였고 종류는 5가지와 19가지, 그리고 55가지였다")
-    test_normalize("JTBC는 TH와 K 양이 2017년 9월 12일 오후 12시에 24살이 된다")
-    print(list(hangul_to_jamo(list(hangul_to_jamo('비대위원장이 지난 1월 이런 말을 했습니다? “난 그냥 산돼지처럼 돌파하는 스타일이다”')))))
-
-
-# %%
 # Define helper functions in "utils.py"
 def get_length(wavpath, sample_rate):
     audio = audiosegment.from_file(wavpath).resample(sample_rate_Hz=sample_rate)
@@ -1208,6 +1189,7 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
     step = 0
 
     if chkpt_path is not None:
+        print("Resuming from checkpoint: %s" % chkpt_path)
         logger.info("Resuming from checkpoint: %s" % chkpt_path)
         checkpoint = torch.load(chkpt_path)
         model.load_state_dict(checkpoint['model'])
@@ -1224,6 +1206,7 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
 
         # githash = checkpoint['githash']
     else:
+        print("Starting new training run.")
         logger.info("Starting new training run.")
 
     # use this only if input size is always consistent.
@@ -1271,8 +1254,8 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
                     logger.error("Loss exploded to %.04f at step %d!" % (loss, step))
                     raise Exception("Loss exploded")
 
-            save_path = os.path.join(pt_dir, '%s_%s_tier%d_%03d.pt')
-            # % (args.name, githash, args.tier, epoch))
+            save_path = os.path.join(pt_dir, '%s_tier%d_%03d.pt' % (args.name, args.tier, epoch))
+
             torch.save({
                 'model': model.state_dict(),
                 'optimizer': optimizer.state_dict(),
@@ -1281,12 +1264,15 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
                 'hp_str': hp_str,
                 # 'githash': githash,
             }, save_path)
+
+            print("Saved checkpoint to: %s" % save_path)
             logger.info("Saved checkpoint to: %s" % save_path)
 
             validate(args, model, melgen, tierutil, testloader, criterion, writer, step)
 
     except Exception as e:
-        logger.info("Exiting due to exception: %s" % e)
+        print("Exiting due to exception: %s" % e)
+        logger.info("Exiting due to exception: %s" % e)        
         traceback.print_exc()
 
 
@@ -2034,8 +2020,7 @@ class MelNet(nn.Module):
             if self.hp != hp:
                 print('Warning: hp different in file %s' % chkpt_path)
 
-            print("The current checkpoint's IDX is", idx)
-            print("And the current checkpoint's path is", chkpt_path)
+            print("The file path of the checkpoint currently being loaded in is", chkpt_path)
             
             self.tiers[idx+1].load_state_dict(checkpoint['model'])
 
