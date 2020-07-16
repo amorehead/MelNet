@@ -1,4 +1,4 @@
-tier: 1
+tier: 6
 checkpoints: [
   '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_1.pt', # Google Colab
   '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_2.pt', # Google Colab
