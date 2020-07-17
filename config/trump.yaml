@@ -20,7 +20,7 @@ audio:
   n_fft: 1536
   num_freq: 769
   ref_level_db: 20.0
-  min_level_db: -80.0
+  min_level_db: -90.308998
 ---
 train:
   num_workers: 4
