@@ -1,22 +1,22 @@
 tier: 6
 checkpoints: [
-  # '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_1.pt', # Google Colab
-  # '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_2.pt', # Google Colab
-  # '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_3.pt', # Google Colab
-  # '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_4.pt', # Google Colab
-  # '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_5.pt', # Google Colab
-  # '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_6.pt' # Google Colab
+  '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier1_step28928_loss-1_2691.pt', # Google Colab
+  '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier2_step34016_loss-1_1956.pt', # Google Colab
+  '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier3_step4480_loss-1_0721.pt', # Google Colab
+  '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_4.pt', # Google Colab
+  '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_5.pt', # Google Colab
+  '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_6.pt' # Google Colab
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_1.pt', # Local machine
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_2.pt', # Local machine
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_3.pt', # Local machine
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_4.pt', # Local machine
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_5.pt', # Local machine
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_6.pt' # Local machine
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_1.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_2.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_3.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_4.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_5.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_6.pt' # Kaggle
+  # '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_1.pt', # Kaggle
+  # '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_2.pt', # Kaggle
+  # '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_3.pt', # Kaggle
+  # '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_4.pt', # Kaggle
+  # '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_5.pt', # Kaggle
+  # '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier_6.pt' # Kaggle
 ]
 conditional: True

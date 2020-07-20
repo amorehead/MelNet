@@ -6,9 +6,9 @@ model:
 ---
 data:
   name: 'Trump'
-  # path: '/content/drive/My Drive/Trump' # Google Colab
+  path: '/content/drive/My Drive/Trump' # Google Colab
   # path: '~/Datasets/Trump' # Local machine
-  path: '../input/trump-speech-sounds/Trump' # Kaggle
+  # path: '../input/trump-speech-sounds/Trump' # Kaggle
   extension: '*.wav'
 ---
 audio:
