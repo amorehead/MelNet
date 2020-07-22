@@ -3,7 +3,7 @@ checkpoints: [
   '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier1_step28928_loss-1_2691.pt', # Google Colab
   '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier2_step34016_loss-1_1956.pt', # Google Colab
   '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier3_step4480_loss-1_0721.pt', # Google Colab
-  '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_4.pt', # Google Colab
+  '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier4_step6528_loss-1_2800.pt', # Google Colab
   '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_5.pt', # Google Colab
   '/content/drive/My Drive/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_6.pt' # Google Colab
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_1.pt', # Local machine
