@@ -12,11 +12,11 @@ checkpoints: [
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_4.pt', # Local machine
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_5.pt', # Local machine
   # '~/Repositories/Tremendous Storytime/MelNet/chkpt/tremendous_storytime_checkpoint_tier_6.pt' # Local machine
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier1_step28928_loss-1_2691.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier2_step34016_loss-1_1956.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier3_step34848_loss-1_1984.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier4_step10912_loss-1_3524.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier5_step4352_loss-1_3193.pt', # Kaggle
-  '../input/tremendous-storytime-checkpoint-1/tremendous_storytime_checkpoint_tier6_step8192_loss-1_6498.pt' # Kaggle
+  '../input/tremendous-storytime-checkpoint-1/chkpt/tremendous_storytime_checkpoint_tier1_step28928_loss-1_2691.pt', # Kaggle
+  '../input/tremendous-storytime-checkpoint-1/chkpt/tremendous_storytime_checkpoint_tier2_step34016_loss-1_1956.pt', # Kaggle
+  '../input/tremendous-storytime-checkpoint-1/chkpt/tremendous_storytime_checkpoint_tier3_step34848_loss-1_1984.pt', # Kaggle
+  '../input/tremendous-storytime-checkpoint-1/chkpt/tremendous_storytime_checkpoint_tier4_step10912_loss-1_3524.pt', # Kaggle
+  '../input/tremendous-storytime-checkpoint-1/chkpt/tremendous_storytime_checkpoint_tier5_step4352_loss-1_3193.pt', # Kaggle
+  '../input/tremendous-storytime-checkpoint-1/chkpt/tremendous_storytime_checkpoint_tier6_step8192_loss-1_6498.pt' # Kaggle
 ]
 conditional: True
